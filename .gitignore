@@ -145,3 +145,5 @@ sdkconfig.*
 **/src/
 **/platformio.ini
 /secrets.yaml
+/ac_ir.yaml
+compile_flags.txt

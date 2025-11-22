@@ -15,24 +15,5 @@ external_components:
       type: local
       path: components
     components:
-      - empty_automation
-      - empty_binary_output
-      - empty_binary_sensor
-      - empty_component
-      - empty_compound_sensor
-      - empty_cover
-      - empty_fan
-      - empty_float_output
-      - empty_gpio_component
-      - empty_i2c_component
-      - empty_i2c_sensor
-      - empty_light
-      - empty_sensor
-      - empty_sensor_hub
-      - empty_spi_component
-      - empty_spi_sensor
-      - empty_switch
-      - empty_text_sensor
-      - empty_uart_component
-      - empty_uart_sensor
+      - baymak_ac
     refresh: always

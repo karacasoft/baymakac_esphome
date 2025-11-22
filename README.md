@@ -5,6 +5,8 @@
   </picture>
 </a>
 
+# TODO: Will edit this later
+
 # ESPHome starter components
 
 This repository contains a number of examples in the form of empty components which can be used as templates to quickly
