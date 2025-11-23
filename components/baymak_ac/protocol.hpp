@@ -12,7 +12,7 @@ void send_ac_frame(AcState &state);
 
 
 namespace esphome {
-namespace baymak_ac {
+namespace baymak_ac_ns {
 
 using esphome::remote_base::RemoteTransmitData;
 
@@ -95,7 +95,7 @@ inline void sendPulseDistanceWidthFromArray(
   sendPulseWidthDistanceArray(dst, durations, pos, carrier_hz, true);
 }
 
-}  // namespace baymak_ac
+}  // namespace baymak_ac_ns
 }  // namespace esphome
 
 
