@@ -96,8 +96,7 @@ void BaymakACComponent::send_frame_() {
       550,       // zero_space
       tRawData,
       104,       // nbits
-      BitOrder::LSB_FIRST,
-      true
+      BitOrder::LSB_FIRST
   );
 
   // 4) Actually send it
