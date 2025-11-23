@@ -347,7 +347,8 @@ void BaymakACComponent::send_frame_() {
 
   uint8_t checksum = compute_checksum(w0, w1, w2);
 
-  static const uint8_t NBITS = 104;
+  //sending one extra bit, marks the end of the tranmission
+  static const uint8_t NBITS = 105;
 
   uint32_t tRawData[4] = {
       w0,
