@@ -301,6 +301,9 @@ void BaymakACComponent::send_frame_() {
     return;
   }
 
+  this->send_known_good_test_();
+  return;
+
   bool power_off = (this->mode == climate::CLIMATE_MODE_OFF);
 
   // Use last known non-off state for encoding when turning OFF
@@ -380,6 +383,35 @@ void BaymakACComponent::send_frame_() {
       BitOrder::LSB_FIRST);
 
   // 4) Actually send it
+  tx.perform();
+}
+
+void BaymakACComponent::send_known_good_test_() {
+  if (this->transmitter_ == nullptr) return;
+
+  const uint32_t tRawData[4] = {
+      0x00E0B7C3,
+      0x00800060,
+      0x05003000,
+      0x0000006F,  // checksum byte in LSB
+  };
+
+  auto tx = this->transmitter_->transmit();
+  auto *data = tx.get_data();
+
+  sendPulseDistanceWidthFromArray(
+      data,
+      38,   // carrier kHz
+      8950, // header_mark (same as before)
+      4450, // header_space
+      550,  // one_mark
+      1650, // one_space
+      550,  // zero_mark
+      550,  // zero_space
+      tRawData,
+      104,  // nbits
+      BitOrder::LSB_FIRST);
+
   tx.perform();
 }
 

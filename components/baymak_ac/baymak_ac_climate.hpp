@@ -18,6 +18,7 @@ class BaymakACComponent : public climate::Climate, public Component {
   // Climate
   climate::ClimateTraits traits() override;
   void control(const climate::ClimateCall &call) override;
+  void send_known_good_test_();
 
   void set_transmitter(remote_transmitter::RemoteTransmitterComponent *transmitter) {
     this->transmitter_ = transmitter;
