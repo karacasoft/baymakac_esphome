@@ -2,30 +2,22 @@
 
 #include "esphome/components/remote_base/remote_base.h"
 
-struct __AcState {
-
-};
+struct __AcState {};
 
 typedef struct __AcState AcState;
 
 void send_ac_frame(AcState &state);
-
 
 namespace esphome {
 namespace baymak_ac_ns {
 
 using esphome::remote_base::RemoteTransmitData;
 
-enum BitOrder {
-  LSB_FIRST,
-  MSB_FIRST
-};
+enum BitOrder { LSB_FIRST, MSB_FIRST };
 
-inline void sendPulseWidthDistanceArray(RemoteTransmitData *dst,
-                                        const uint16_t *durations,
-                                        size_t length,
-                                        uint32_t carrier_hz = 38000,
-                                        bool start_with_mark = true) {
+inline void sendPulseWidthDistanceArray(RemoteTransmitData *dst, const uint16_t *durations, size_t length,
+                                        uint32_t carrier_hz = 38000, bool start_with_mark = true,
+                                        bool active_low = false) {
   dst->reset();
   dst->set_carrier_frequency(carrier_hz);
   dst->reserve(length);
@@ -33,29 +25,27 @@ inline void sendPulseWidthDistanceArray(RemoteTransmitData *dst,
   bool mark = start_with_mark;
   for (size_t i = 0; i < length; i++) {
     uint32_t d = durations[i];
-    if (d == 0)
-      continue;
-    if (mark)
-      dst->mark(d);
-    else
-      dst->space(d);
+    if (!active_low) {
+      // Normal IR LED on HIGH
+      if (mark)
+        dst->mark(d);
+      else
+        dst->space(d);
+    } else {
+      // Active-low: inverted meaning
+      if (mark)
+        dst->space(d);  // LED ON → LOW
+      else
+        dst->mark(d);  // LED OFF → HIGH
+    }
     mark = !mark;
   }
 }
 
-inline void sendPulseDistanceWidthFromArray(
-    RemoteTransmitData *dst,
-    uint32_t carrier_khz,
-    uint16_t header_mark,
-    uint16_t header_space,
-    uint16_t one_mark,
-    uint16_t one_space,
-    uint16_t zero_mark,
-    uint16_t zero_space,
-    const uint32_t *data,
-    uint16_t nbits,
-    BitOrder bit_order = LSB_FIRST) {
-
+inline void sendPulseDistanceWidthFromArray(RemoteTransmitData *dst, uint32_t carrier_khz, uint16_t header_mark,
+                                            uint16_t header_space, uint16_t one_mark, uint16_t one_space,
+                                            uint16_t zero_mark, uint16_t zero_space, const uint32_t *data,
+                                            uint16_t nbits, BitOrder bit_order = LSB_FIRST, bool active_low = false) {
   // Worst-case durations count: 2 (header) + 2 * nbits (each bit: mark+space)
   // 104 bits → 210 entries max, which is small.
   constexpr size_t MAX_BITS = 300;  // adjust if you have longer frames
@@ -92,10 +82,8 @@ inline void sendPulseDistanceWidthFromArray(
 
   // carrier_khz → Hz
   uint32_t carrier_hz = carrier_khz * 1000U;
-  sendPulseWidthDistanceArray(dst, durations, pos, carrier_hz, true);
+  sendPulseWidthDistanceArray(dst, durations, pos, carrier_hz, true, active_low);
 }
 
 }  // namespace baymak_ac_ns
 }  // namespace esphome
-
-
