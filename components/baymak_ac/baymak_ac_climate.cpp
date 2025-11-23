@@ -301,9 +301,6 @@ void BaymakACComponent::send_frame_() {
     return;
   }
 
-  this->send_known_good_test_();
-  return;
-
   bool power_off = (this->mode == climate::CLIMATE_MODE_OFF);
 
   // Use last known non-off state for encoding when turning OFF
