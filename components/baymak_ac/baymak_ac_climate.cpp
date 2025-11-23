@@ -270,7 +270,7 @@ void BaymakACComponent::control(const climate::ClimateCall &call) {
   }
 
   if (call.get_fan_mode().has_value()) {
-    this->fan_mode = *call.get_fan_mode();
+    this->fan_mode = call.get_fan_mode();
   }
 
   if (call.get_swing_mode().has_value()) {
@@ -304,7 +304,7 @@ void BaymakACComponent::send_frame_() {
   climate::ClimateMode eff_mode =
       power_off ? this->last_mode_ : this->mode;
   climate::ClimateFanMode eff_fan =
-      power_off ? this->last_fan_mode_ : this->fan_mode;
+      power_off ? this->last_fan_mode_.value_or(climate::CLIMATE_FAN_AUTO) : this->fan_mode.value_or(climate::CLIMATE_FAN_AUTO);
   climate::ClimateSwingMode eff_swing =
       power_off ? this->last_swing_mode_ : this->swing_mode;
   float eff_temp =

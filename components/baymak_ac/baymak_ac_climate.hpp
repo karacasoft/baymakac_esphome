@@ -4,6 +4,7 @@
 #include "esphome/components/remote_transmitter/remote_transmitter.h"
 #include "esphome/components/climate/climate.h"
 #include "esphome/core/hal.h"
+#include "esphome/core/optional.h"
 
 namespace esphome {
 namespace baymak_ac_ns {
@@ -30,7 +31,7 @@ class BaymakACComponent : public climate::Climate, public Component {
 
   // Remember last non-OFF state so we can send a deterministic OFF frame
   climate::ClimateMode last_mode_{climate::CLIMATE_MODE_COOL};
-  climate::ClimateFanMode last_fan_mode_{climate::CLIMATE_FAN_AUTO};
+  optional<climate::ClimateFanMode> last_fan_mode_{climate::CLIMATE_FAN_AUTO};
   climate::ClimateSwingMode last_swing_mode_{climate::CLIMATE_SWING_OFF};
   float last_target_temperature_{24.0f};
 };
