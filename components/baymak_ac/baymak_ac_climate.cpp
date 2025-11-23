@@ -216,6 +216,10 @@ static void swing_to_vane(climate::ClimateSwingMode swing_mode,
 
 void BaymakACComponent::setup() {
   ESP_LOGCONFIG(TAG, "Running setup");
+
+  if (std::isnan(this->target_temperature)) {
+    this->target_temperature = 30.0f;
+  }
 }
 
 void BaymakACComponent::loop() {
@@ -234,7 +238,7 @@ climate::ClimateTraits BaymakACComponent::traits() {
       climate::CLIMATE_MODE_HEAT,
       climate::CLIMATE_MODE_DRY,
       climate::CLIMATE_MODE_FAN_ONLY,
-      climate::CLIMATE_MODE_AUTO,
+      // climate::CLIMATE_MODE_AUTO,
   });
 
   traits.set_supported_fan_modes({
@@ -251,7 +255,6 @@ climate::ClimateTraits BaymakACComponent::traits() {
       climate::CLIMATE_SWING_HORIZONTAL,
   });
 
-  traits.add_feature_flags(climate::CLIMATE_SUPPORTS_CURRENT_TEMPERATURE);
   traits.set_visual_min_temperature(16.0f);
   traits.set_visual_max_temperature(30.0f);
   traits.set_visual_temperature_step(0.5f);
