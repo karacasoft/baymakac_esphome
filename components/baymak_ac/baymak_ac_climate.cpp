@@ -402,14 +402,14 @@ void BaymakACComponent::send_known_good_test_() {
   sendPulseDistanceWidthFromArray(
       data,
       38,   // carrier kHz
-      8950, // header_mark (same as before)
-      4450, // header_space
+      9000, // header_mark (same as before)
+      4500, // header_space
       550,  // one_mark
       1650, // one_space
       550,  // zero_mark
       550,  // zero_space
       tRawData,
-      104,  // nbits
+      105,  // nbits
       BitOrder::LSB_FIRST);
 
   tx.perform();
