@@ -2,6 +2,7 @@
 #include "esphome/core/log.h"
 #include "esphome/components/remote_base/remote_base.h"
 #include "baymak_ac_climate.hpp"
+#include "esphome/core/preferences.h"
 #include "protocol.hpp"
 #include <string>
 #include <cmath>
@@ -217,8 +218,27 @@ static void swing_to_vane(climate::ClimateSwingMode swing_mode,
 void BaymakACComponent::setup() {
   ESP_LOGCONFIG(TAG, "Running setup");
 
-  if (std::isnan(this->target_temperature)) {
-    this->target_temperature = 30.0f;
+  this->pref_ = global_preferences->make_preference<ACStoredState>(0xBAAC0001);
+
+  ACStoredState saved;
+  if (this->pref_.load(&saved)) {
+    this->mode = saved.mode;
+    this->target_temperature = saved.target_temperature;
+    this->fan_mode = saved.fan_mode;
+    this->swing_mode = saved.swing_mode;
+
+    if (this->mode != climate::CLIMATE_MODE_OFF) {
+      this->last_mode_ = this->mode;
+      this->last_fan_mode_ = *this->fan_mode;
+      this->last_swing_mode_ = this->swing_mode;
+      this->last_target_temperature_ = this->target_temperature;
+    }
+
+    this->publish_state();
+  } else {
+    if (std::isnan(this->target_temperature)) {
+      this->target_temperature = 30.0f;
+    }
   }
 }
 
@@ -273,7 +293,7 @@ void BaymakACComponent::control(const climate::ClimateCall &call) {
   }
 
   if (call.get_fan_mode().has_value()) {
-    this->fan_mode = call.get_fan_mode();
+    this->fan_mode = *call.get_fan_mode();
   }
 
   if (call.get_swing_mode().has_value()) {
@@ -290,6 +310,15 @@ void BaymakACComponent::control(const climate::ClimateCall &call) {
 
   // Send IR frame for the new state
   this->send_frame_();
+
+  ACStoredState save{};
+  save.powered = (this->mode != climate::CLIMATE_MODE_OFF);
+  save.mode = this->mode;
+  save.target_temperature = this->target_temperature;
+  save.fan_mode = *this->fan_mode;
+  save.swing_mode = this->swing_mode;
+
+  this->pref_.save(&save);
 
   // Publish the new state to Home Assistant
   this->publish_state();

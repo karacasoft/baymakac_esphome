@@ -1,13 +1,23 @@
 #pragma once
 
+#include "esphome/components/climate/climate_mode.h"
 #include "esphome/core/component.h"
 #include "esphome/components/remote_transmitter/remote_transmitter.h"
 #include "esphome/components/climate/climate.h"
 #include "esphome/core/hal.h"
 #include "esphome/core/optional.h"
+#include "esphome/core/preferences.h"
 
 namespace esphome {
 namespace baymak_ac_ns {
+
+struct ACStoredState {
+  bool powered;
+  climate::ClimateMode mode;
+  float target_temperature;
+  climate::ClimateFanMode fan_mode;
+  climate::ClimateSwingMode swing_mode;
+};
 
 class BaymakACComponent : public climate::Climate, public Component {
  public:
@@ -26,6 +36,8 @@ class BaymakACComponent : public climate::Climate, public Component {
 
  protected:
   remote_transmitter::RemoteTransmitterComponent *transmitter_{nullptr};
+  ESPPreferenceObject pref_;
+  ACStoredState stored_state_{};
 
  private:
   void send_frame_();
